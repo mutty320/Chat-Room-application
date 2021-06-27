@@ -1,5 +1,5 @@
--------------------------------------------------------------------------------------------
 Main controller:
+
 UserController is the main controller operating all the handler functions, as follows:
 
 The home page handler- "/" will first check if the user is logged in.
@@ -21,8 +21,10 @@ List of the connected users.
 List of the last 5 messages.
 Search button.
 Log out button.
+
 -------------------------------------------------------------------------------------------
 connected users:
+
 We consider a user as "active" by monitoring his fetch requests for the logged in users.
 
 For a gap greater then 10 seconds between request, a user will be deemed as non active and removed
@@ -45,8 +47,10 @@ User name.
 Boolean for- is user logged in.
 NewMessageId- to track new messages.
 profileIndex- to apply a profile picture.
+
 -------------------------------------------------------------------------------------------
 get messages:
+
 the response to the request for the list of messages will return the list of the last 5 messages only if a new message was added
 
 otherwise returns an empty list and no change is made on the client side.
@@ -65,12 +69,14 @@ Messages otherwise we keep the old list.
 
 -------------------------------------------------------------------------------------------
 Session:
+
 When a sessions time has expired or if the session had been terminated it is caught upon
 
 the next time the user will try sending another message.
 
 -------------------------------------------------------------------------------------------
 Synchronized:
+
 The joined resource which might be accessed simultaneously by multiple users is the "user list" component.
 
 That is why all the components seter and geter functions are synchronized.
@@ -81,6 +87,7 @@ Since this can happen by any which user, we use an AtomicLong for this indicator
 
 -------------------------------------------------------------------------------------------
 Unauthorised get requests:
+
 If the url for the search page is entered and the user never logged in we display
 
 A proper message.
