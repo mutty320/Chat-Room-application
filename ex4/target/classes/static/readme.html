@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Readme</title>
+</head>
+
+<body>
+<p> Mutty Schwarz</p>
+<p> I.D. 310062823</p>
+<p> Email: <a href="mailto:mutty320@gmail.com">mutty320@gmail.com</a></p>
+-------------------------------------------------------------------------------------------
+<p> Itsik Weiss</p>
+<p> I.D. 201056512</p>
+<p> Email: <a href="mailto:itsikweiss1@gmail.com">itsikweiss1@gmail.com</a></p>
+-------------------------------------------------------------------------------------------
+<p>Link to java doc: <a href="./api/com/example/ex4/package-summary.html">
+    package-summary.html
+</a></p>
+-------------------------------------------------------------------------------------------
+<h3>Main controller:</h3>
+<p>UserController is the main controller operating all the handler functions, as follows:</p>
+<p>The home page handler- "/" will first check if the user is logged in.</p>
+<p>If not-</p>
+<p>It will display a login page where the user will enter his name.</p>
+<p>After the user enters his name he will be transferred to the chat room.</p>
+<p>If the user is logged in-</p>
+<p>Then the home page will automatically redirect to the chat room.</p>
+<p>The chat room displays as follows:</p>
+<ul>
+    <li>Greeting to user.</li>
+    <li>List of the connected users.</li>
+    <li>List of the last 5 messages.</li>
+    <li>Search button.</li>
+    <li>Log out button.</li>
+</ul>
+-------------------------------------------------------------------------------------------
+<h3>connected users:</h3>
+<p>We consider a user as "active" by monitoring his fetch requests for the logged in users.</p>
+<p>For a gap greater then 10 seconds between request, a user will be deemed as non active and removed</p>
+<p>From the list (even though his session might still be active).</p>
+<p>To evaluate this we use a component called "UserList"</p>
+<p>Which holds all the users in a hash map with a timestamp of there last request.</p>
+<p>If the session is destroyed or deleted then upon submitting the next message the user will receive an</p>
+<p>Error notification and a link to login again.</p>
+<p>In order to track down the different users, user info will be held in the component "DataSessionScope" which is scoped to the session
+    scope.
+</p>
+<p>The info is stored as follows:
+</p>
+<ul>
+    <li>User name.</li>
+    <li>Boolean for- is user logged in.</li>
+    <li>NewMessageId- to track new messages.</li>
+    <li>profileIndex- to apply a profile picture.</li>
+</ul>
+-------------------------------------------------------------------------------------------
+<h3>get messages:</h3>
+<p>the response to the request for the list of messages will return the list of the last 5 messages only if a new message was added</p>
+<p>otherwise returns an empty list and no change is made on the client side.</p>
+<p>The NewMessageId will determine whether or not there was a new message added.</p>
+<p>It is evaluated as follows:</p>
+<p>In the main controller we store an Atomic value which is incremented for every new message. then when a</p>
+<p>User requests the list of messages </p>
+<p>His NewMessageId will be compared to the current message count, if they differ we then return the latest 5</p>
+<p>Messages otherwise we keep the old list.</p>
+-------------------------------------------------------------------------------------------
+<h3>Session:</h3>
+<p>When a sessions time has expired or if the session had been terminated it is caught upon </p>
+<p><b>the next time the user will try sending another message.</b></p>
+-------------------------------------------------------------------------------------------
+<h3>Synchronized:</h3>
+<p>The joined resource which might be accessed simultaneously by multiple users is the "user list" component.</p>
+<p>That is why all the components seter and geter functions are synchronized.</p>
+<p>The new message indicator is incremented for each new message which can</p>
+<p>Since this can happen by any which user, we use an AtomicLong for this indicator.</p>
+-------------------------------------------------------------------------------------------
+<h3>Unauthorised get requests:</h3>
+<p>If the url for the search page is entered and the user never logged in we display</p>
+<p>A proper message.</p>
+<p>And we do the same for the chat room url.</p>
+<p>If the request comes from a logged in user then the page is provided.</p>
+-------------------------------------------------------------------------------------------
+<h3>Bonus points:</h3>
+<p>We are happy to acquire the bonus points.</p>
+<p>Implemented as follows:</p>
+<p>When a new user tries to register before he is added to the user list</p>
+<p>The list is scanned, if the list contains the users name</p>
+<p>He will be notified and redirected to the login page.</p>
+-------------------------------------------------------------------------------------------
+</body></html>

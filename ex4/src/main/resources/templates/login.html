@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="./css/main.css" />
+</head>
+<body>
+
+<div id="username-page">
+    <div class="username-page-container">
+        <h1 class="title">Type your username to join the chat</h1>
+        <form  action="#" th:action="@{/saveMessage}" method="post" th:object="${message}">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="name" class="col-form-label">Name</label>
+                    <input type="text" th:field="*{name}"  id="name"  class="form-control"  placeholder="Name"/>
+
+                    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+
+                    <input type="hidden"  th:value="${message.name}">
+
+                </div>
+                <button type="submit" class="primary">Send</button>
+
+                </div>
+        </form>
+    </div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="./js/main.js"></script>
+
+
+</body>
+</html>

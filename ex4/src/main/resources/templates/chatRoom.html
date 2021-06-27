@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Chat Room</title>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col text-center bg-secondary text-white">
+            <h2><span th:text="${name}"/> Welcome to the chat room:</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card bg-light text-dark" style="width: 18rem;">
+                <img class="card-img-top">
+                <h4>connected users:</h4>
+
+                <div id="connected-users"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6 offset-md-3 col-sm-6 offset-sm-3 col-12 comments-main pt-4 rounded">
+
+            <h2 class="col text-center">Latest messages:</h2>
+
+            <div id="users"></div>
+
+            <div class="row comment-box-main p-3">
+                <div class="col-md-9 col-sm-9 col-9 pr-0 comment-box" th:object="${message}">
+                    <input id="content" type="text" th:field="*{chat}" class="form-control" placeholder="comment ...."
+                           required/>
+                </div>
+                <div class="col-md-3 col-sm-2 col-2 pl-0 text-center send-btn">
+                    <button id="send" class="btn btn-info">Send</button>
+                </div>
+            </div>
+
+            <div class="row comment-box-main p-3 rounded-bottom">
+                <div>
+                    <form action="#" id="logout-form" th:action="@{/logOut}" method="get" th:object="${message}">
+                        <div class="col-12 m-3 text-center send-btn">
+                            <button id="logout" class="btn btn-info">Log out</button>
+                            <button  type=button onClick="location.href='/get'"
+                                     value='click here' class="btn btn-info">Search</button>
+                        </div>
+                        <input type="hidden" name="name" value="name" th:value="${name}">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form action="#" id="message-form" th:action="@{/addMessage}" method="post" th:object="${message}">
+    <input type="hidden" id="name" name="name" th:value="${name}">
+    <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-danger"></span>
+    <input type="hidden" id="id" th:value="${message.id}">
+    <input type="hidden" id="ProfileIndex" name="ProfileIndex" th:value="${ProfileIndex}">
+</form>
+
+<script>
+    function getLoggedInUsers() {
+
+        let name = document.getElementById("name").value;
+
+        fetch("/getConnectedUsers?name=" + name, {//the name is necessary for updating timestamp
+
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                if (resp.length == 0) {
+                } else {
+                    document.getElementById("connected-users").innerHTML = "";
+                    res = "";
+                    for (el of resp.reverse()) {
+                        res = res + "<h4>"+el+"</h4>";
+                        document.getElementById("connected-users").innerHTML = res;
+                    }
+                    ;
+                }//close else
+            })
+
+            .catch(e => {
+                document.getElementById("connected-users").innerHTML = "Some error occured!";
+            });
+
+        setTimeout(getLoggedInUsers, 10000);
+    };
+    //----------------------------------------------------------
+    function getMessages() {
+        var i = 0;
+        var Index;
+        var user = "";
+
+        let me = document.getElementById("name").value;
+        let myIndex = document.getElementById("ProfileIndex").value;
+
+        fetch("/getMessages", {
+
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(resp => {
+                if (resp.length === 0) {
+                } else {
+                    res = "";
+                    document.getElementById("users").innerHTML = "";
+
+                    for (el of resp.reverse()) {
+
+                        if (el.name == me) {
+                            Index = (myIndex % 4) + 1;
+                        } else if (user != el.name) {
+                            user = el.name;
+                            Index = (i % 4) + 1;
+                        }
+                        i++;
+
+                        var link = "http://nicesnippets.com/demo/man0" + Index + ".png";
+                        document.getElementById("users").innerHTML += newMessage(el.name, el.chat, link, Index);
+
+                    }
+                }//close else
+            })
+            .catch(e => {
+                document.getElementById("message").innerHTML = "Some error occured!";
+            });
+        setTimeout(getMessages, 10000);
+
+    };
+
+    //----------------------------------------------------------
+    function newMessage(name, chat, link, index) {
+
+        let oddMessage =
+            "<ul class='p-0'>" +
+            "<li>" +
+            "<div class='row comments mb-2'>" +
+            "<div class = 'col-md-2 col-sm-2 col-3 text-center user-img'>\n" +
+            " <img id='profile-photo' src =" + link + " className='rounded-circle'/>\n" +
+            "</div>" +
+            "<div class='col-md-9 col-sm-9 col-9 comment rounded mb-2'>\n" +
+            "<h4 class='m-0'>" +
+            "<a href='#' >" + name + "</a>" +
+            "</h4>" +
+            "<p class='mb-0 text-white'  >" + chat + " </p>" +
+            "</div>" +
+            "</div>" +
+            "</li>" +
+            "</ul>";
+
+        let evenMessage =
+            "<ul class='p-0'>" +
+            "<li>" +
+            "<div class='row comments mb-2'>" +
+            "<div class = 'col-md-2 offset-md-2 col-sm-2 offset-sm-2 col-3 offset-1 text-center user-img'>\n" +
+            " <img id='profile-photo' src =" + link + " className='rounded-circle'/>\n" +
+            "</div>" +
+            "<div class='col-md-7 col-sm-7 col-8 comment rounded mb-2'>\n" +
+            "<h4 class='m-0'>" +
+            "<a href='#'> " + name + "</a>" +
+            "</h4>" +
+            "<p class='mb-0 text-white'>" + chat + " </p>" +
+            "</div>" +
+            "</div>" +
+            "</li>" +
+            "</ul>";
+
+
+        if (index % 2 == 1)
+            return oddMessage;
+
+        return evenMessage;
+
+
+    };
+
+    //----------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+        logOut()
+        messageSubmit();
+        getLoggedInUsers();
+        getMessages();
+    });
+
+    //----------------------------------------------------------
+    function messageSubmit() {
+        document.getElementById("send").addEventListener("click", function (event) {
+            if (!validateInput())
+                return;
+
+            document.getElementById("message-form").submit();
+        });
+    }
+
+    //----------------------------------------------------------
+    function logOut() {
+        document.getElementById("logout").addEventListener("click", function (event) {
+
+            document.getElementById("logout-form").submit();
+        });
+    }
+    //----------------------------------------------------------
+    function validateInput() {
+        let chat = document.getElementById("content").value.trim();
+
+        if (chat == "")
+            return false;
+
+        document.getElementById("message-form").innerHTML += "<input type='hidden' name='chat' id='chat' value='" + chat + "'>"
+
+        return true;
+    }
+    //----------------------------------------------------------
+</script>
+
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/0.12.14/vue.min.js'></script>
+<script src="./js/chat.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
+        integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+      integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="custom.css">
+<link rel="stylesheet" href="./css/chat.css"/>
+
+
+</body>
+</html>
+
