@@ -19,9 +19,9 @@ The chat room displays as follows:
 Greeting to user.
 List of the connected users.
 List of the last 5 messages.
+Send button.
 Search button.
 Log out button.
-Send button.
 
 -------------------------------------------------------------------------------------------
 connected users:
