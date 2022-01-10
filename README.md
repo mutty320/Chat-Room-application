@@ -82,9 +82,9 @@ The joined resource which might be accessed simultaneously by multiple users is 
 
 That is why all the components seter and geter functions are synchronized.
 
-Also the new message indicator is incremented for each new message and
+Also the "new message" indicator is incremented for each new message and
 
-since this can happen by any which user, we use an AtomicLong for this indicator.
+since this can happen by any which user, an AtomicLong is used for this indicator.
 
 -------------------------------------------------------------------------------------------
 Unauthorised get requests:
