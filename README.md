@@ -21,6 +21,7 @@ List of the connected users.
 List of the last 5 messages.
 Search button.
 Log out button.
+Send button.
 
 -------------------------------------------------------------------------------------------
 connected users:
