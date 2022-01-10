@@ -28,9 +28,9 @@ connected users:
 
 We consider a user as "active" by monitoring his fetch requests for the logged in users.
 
-For a gap greater then 10 seconds between request, a user will be deemed as non active and removed.
+For a gap greater then 10 seconds between request, a user will be deemed as non active and removed
 
-From the list (even though his session might still be active).
+from the list (even though his session might still be active).
 
 To evaluate this we use a component called "UserList"
 
