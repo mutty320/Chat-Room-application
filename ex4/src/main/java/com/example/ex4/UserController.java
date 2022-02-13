@@ -14,14 +14,28 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * parameters:
- *newMessage- is used as an indicator for if a new message was added.
- *userCounter- is a user id to match him a profile picture.
- *userList- is used to store all the connected users.
+ *newMessage- an indicator for if a new message was added.
+ *userCounter- a user id to match him a profile picture.
+ *userList- used to store all the connected users.
  *repository- is for the CRUD functionality.
  *dataSessionScope- holds info to track the different users.
  */
 @Controller
 public class UserController {
+
+    //==============Html templates==============
+    private final String LOGIN = "login";
+    private final String CHAT_ROOM = "chatRoom";
+    private final String ERROR = "error";
+    private final String REDIRECT = "redirect:/";
+    private final String SEARCH = "search";
+    //=============================Error Messages============================================================
+    private final String SESSION_EXPIRED = "your session expired! please press the link below to login again.";
+    private final String FIRST_LOGIN = "Pleas login first.";
+    private final String LOGIN_TO_JOIN ="Pleas login first to join the chat.";
+    private final String LOGIN_TO_SEARCH = "Pleas login first in order to search.";
+    private final String NAME_IS_TAKEN = "the name provided is already logged in please try another name ";
+    //=======================================================================================================
 
     private AtomicLong newMessage = new AtomicLong(0);
     private int userCounter = 0;
@@ -29,20 +43,18 @@ public class UserController {
     private UserList userList;
     @Autowired
     private UserRepository repository;
-
     private UserRepository getRepo() {
         return repository;
     }
 
     @Autowired
     private DataSessionScope dataSessionScope;
-
     public DataSessionScope getSession() {
         return dataSessionScope;
     }
 
     /**
-     * this url is the home page the handler will check
+     * this url is the home page. the handler will check
      * if the user had already logged in.
      * if not, will display the login page.
      * else will send the user directly to the chat room.
@@ -54,20 +66,19 @@ public class UserController {
     @GetMapping("/")
     public String login(Message message, Model model) {
 
-
-        userList.getActiveUserList();
+        userList.clearUserList();
 
         if (getSession().isLoggedIn()) {
+
             getSession().setNewMessageId(newMessage.get() - 1);
 
             model.addAttribute("ProfileIndex", getSession().getProfileIndex());
 
             model.addAttribute("name", getSession().getName());
 
-            return "chatRoom";
+            return CHAT_ROOM;
         }
-
-        return "login";
+        return LOGIN;
     }
 
     /**
@@ -90,14 +101,14 @@ public class UserController {
     public String showSignUpForm(@Valid @ModelAttribute Message message, BindingResult result, @RequestParam(value = "name") String name, Model model) {
 
         if (result.hasErrors()) {
-            return "login";
+            return LOGIN;
         }
         //set last message id to know if a new message was added
         getSession().setNewMessageId(newMessage.get() - 1);
 
         if (!userList.setTime(name)) {//give the user first time stamp
-            model.addAttribute("error", "the name u provided is already logged in pleas try another name ");
-            return "error";
+            model.addAttribute("error", NAME_IS_TAKEN);
+            return ERROR;
         }
         getSession().setLoggedIn(true);//turn on users logged in flag
         getSession().setName(name);//set session name
@@ -107,7 +118,7 @@ public class UserController {
 
         model.addAttribute("name", name);
         model.addAttribute("message", message);
-        return "chatRoom";
+        return CHAT_ROOM;
 
     }
 
@@ -118,7 +129,7 @@ public class UserController {
      */
     @GetMapping("/get")
     public String search() {
-        return "search";
+        return SEARCH;
     }
 
     /**
@@ -133,7 +144,6 @@ public class UserController {
     List<Message> userMessages(@RequestParam(value = "name") String name) {
 
         return getRepo().findByName(name);
-
     }
 
     /**
@@ -148,7 +158,6 @@ public class UserController {
     List<Message> Messages(@RequestParam(value = "chat") String chat) {
 
         return getRepo().findAllByChatContains(chat);
-
     }
 
     /**
@@ -185,9 +194,7 @@ public class UserController {
         //this will update the time of last fetch indicating that the user is still logged in
         userList.setLastRequest(name);
 
-        List<String> users = userList.getActiveUserList();
-
-        return users;
+        return userList.getActiveUserList();
     }
 
     /**
@@ -204,13 +211,13 @@ public class UserController {
         userList.updateUserList(name);//remove user from active user list
 
         getSession().setLoggedIn(false);//flag the session for leaving
-        return "redirect:/";
+        return REDIRECT;
     }
 
     /**
      * this handler is called when the user sends a new message.
      * first it checks if the session is alive,
-     * if not, will display a message.
+     * if not, will display an error message.
      * if the session is still active then will save the new message in sql DB.
      *
      * @param message the new message being stored.
@@ -220,12 +227,12 @@ public class UserController {
     @PostMapping("/addMessage")
     public String addMessage(@ModelAttribute("message") Message message, Model model) {
 
-        //for if session ended
+        //if session ended
         if (!getSession().isLoggedIn()) {
             userList.updateUserList(message.getName());//delete from user list
             userList.deleteUser(message.getName());//delete from map
-            model.addAttribute("error", "your session expired! please press the link below to login again.");
-            return "error";
+            model.addAttribute("error", SESSION_EXPIRED);
+            return ERROR;
         }
 
         //set the flag to know if a new message was added
@@ -233,7 +240,7 @@ public class UserController {
         getRepo().save(message);
 
         model.addAttribute("name", message.getName());
-        return "chatRoom";
+        return CHAT_ROOM;
     }
 //==================================================================
     /**
@@ -244,33 +251,34 @@ public class UserController {
      */
     @GetMapping("/saveMessage")
     public String notAuthorised(Model model) {
-        model.addAttribute("error", "Pleas login first.");
-        return "error";
+        model.addAttribute("error", FIRST_LOGIN);
+        return ERROR;
     }
-    //------------------------------------------------------------------
+//------------------------------------------------------------------
     @GetMapping("/chatRoom")
     public String loginFirst(Model model) {
 
         if (!getSession().isLoggedIn()){
-            model.addAttribute("error", "Pleas login first to join the chat.");
-            return "error";   }
+            model.addAttribute("error", LOGIN_TO_JOIN);
+            return ERROR;
+        }
 
-        return "redirect:/";
+        return REDIRECT;
     }
-    //------------------------------------------------------------------
+//------------------------------------------------------------------
     @GetMapping("/search")
     public String canSearch(Model model) {
 
         if (!getSession().isLoggedIn()){
-            model.addAttribute("error", "Pleas login first in order to search.");
-            return "error";   }
-
-        return "search";
+            model.addAttribute("error", LOGIN_TO_SEARCH);
+            return ERROR;
+        }
+        return SEARCH;
     }
     //------------------------------------------------------------------
     @GetMapping("/login")
     public String login() {
-        return "redirect:/";
+        return REDIRECT;
     }
 //==================================================================
 }
