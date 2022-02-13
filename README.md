@@ -26,15 +26,15 @@ Log out button.
 -------------------------------------------------------------------------------------------
 connected users:
 
-We consider a user as "active" by monitoring his fetch requests for the logged in users.
+The user is considered "active" based on monitoring his fetch requests for the logged in users.
 
 For a gap greater then 10 seconds between request, a user will be deemed as non active and removed
 
 from the list (even though his session might still be active).
 
-To evaluate this we use a component called "UserList"
+The "UserList" component is used to evaluate this, 
 
-which holds all the users in a hash map with a timestamp of there last request.
+as it holds all the users in a hash map with a timestamp of there last request.
 
 If the session is destroyed or deleted then upon submitting the next message the user will receive an
 
@@ -60,13 +60,14 @@ The NewMessageId will determine whether or not there was a new message added.
 
 It is evaluated as follows:
 
-In the main controller we store an Atomic value which is incremented for every new message. then when a
+In the main controller an Atomic value is stored and is incremented for every new message. then when a
 
 user requests the list of messages
 
-his NewMessageId will be compared to the current message count, if they differ we then return the latest 5
+his NewMessageId will be compared to the current message count, if they differ then the newest 5 
 
-Messages otherwise we keep the old list.
+messages will be returned, otherwise the old list is kept.
+
 
 -------------------------------------------------------------------------------------------
 Session:
@@ -89,18 +90,16 @@ since this can happen by any which user, an AtomicLong is used for this indicato
 -------------------------------------------------------------------------------------------
 Unauthorised get requests:
 
-If the url for the search page is entered and the user never logged in we display
+If the url for the search page is entered and the user never logged in 
 
-a proper message.
+a proper message is displayed.
 
 The same is done for the chat room url,
 
 unless the request comes from a logged in user then the page is provided.
 
 -------------------------------------------------------------------------------------------
-The app will prevent a user from logging in if his name already exist in the chat room.
-
-Implemented as follows:
+The app will prevent a user from logging in if his name already exist in the chat room:
 
 When a new user tries to register before he is added to the user list
 
