@@ -99,7 +99,7 @@ The same is done for the chat room url,
 unless the request comes from a logged in user then the page is provided.
 
 -------------------------------------------------------------------------------------------
-The app will prevent a user from logging in if his name already exist in the chat room:
+Preventing duplicate names:
 
 When a new user tries to register before he is added to the user list
 
