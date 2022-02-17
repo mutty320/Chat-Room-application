@@ -24,7 +24,7 @@ Search button.
 Log out button.
 
 -------------------------------------------------------------------------------------------
-connected users:
+Connected users:
 
 The user is considered "active" based on monitoring his fetch requests for the logged in users.
 
@@ -50,7 +50,7 @@ NewMessageId- to track new messages.
 profileIndex- to apply a profile picture.
 
 -------------------------------------------------------------------------------------------
-get messages:
+Get messages:
 
 the response to the request for the list of messages will return the list of the last 5 messages only if a new message was added
 
