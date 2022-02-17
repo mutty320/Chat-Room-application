@@ -5,43 +5,34 @@
     <title>Chat Room</title>
 </head>
 <body>
-
 <div class="container">
-
     <div class="row">
         <div class="col text-center bg-secondary text-white">
             <h2><span th:text="${name}"/> Welcome to the chat room:</h2>
         </div>
     </div>
-
     <div class="row">
         <div class="col">
             <div class="card bg-light text-dark" style="width: 18rem;">
                 <img class="card-img-top">
                 <h4>connected users:</h4>
-
                 <div id="connected-users"></div>
             </div>
         </div>
     </div>
-
     <div class="row mt-5">
         <div class="col-md-6 offset-md-3 col-sm-6 offset-sm-3 col-12 comments-main pt-4 rounded">
 
-            <h2 class="col text-center">Latest messages:</h2>
-
+            <h2 class="col text-center">5 latest messages:</h2>
             <div id="users"></div>
-
             <div class="row comment-box-main p-3">
                 <div class="col-md-9 col-sm-9 col-9 pr-0 comment-box" th:object="${message}">
-                    <input id="content" type="text" th:field="*{chat}" class="form-control" placeholder="comment ...."
-                           required/>
+                    <input id="content" type="text" th:field="*{chat}" class="form-control" placeholder="comment ...." required/>
                 </div>
                 <div class="col-md-3 col-sm-2 col-2 pl-0 text-center send-btn">
-                    <button id="send" class="btn btn-info">Send</button>
+                    <button id="send" class="btn btn-info">Post</button>
                 </div>
             </div>
-
             <div class="row comment-box-main p-3 rounded-bottom">
                 <div>
                     <form action="#" id="logout-form" th:action="@{/logOut}" method="get" th:object="${message}">
@@ -87,9 +78,8 @@
                         document.getElementById("connected-users").innerHTML = res;
                     }
                     ;
-                }//close else
+                }
             })
-
             .catch(e => {
                 document.getElementById("connected-users").innerHTML = "Some error occured!";
             });
@@ -117,7 +107,6 @@
                 } else {
                     res = "";
                     document.getElementById("users").innerHTML = "";
-
                     for (el of resp.reverse()) {
 
                         if (el.name == me) {
@@ -127,18 +116,15 @@
                             Index = (i % 4) + 1;
                         }
                         i++;
-
                         var link = "http://nicesnippets.com/demo/man0" + Index + ".png";
                         document.getElementById("users").innerHTML += newMessage(el.name, el.chat, link, Index);
-
                     }
-                }//close else
+                }
             })
             .catch(e => {
                 document.getElementById("message").innerHTML = "Some error occured!";
             });
         setTimeout(getMessages, 10000);
-
     };
 
     //----------------------------------------------------------
@@ -178,15 +164,11 @@
             "</li>" +
             "</ul>";
 
-
         if (index % 2 == 1)
             return oddMessage;
 
         return evenMessage;
-
-
     };
-
     //----------------------------------------------------------
     document.addEventListener('DOMContentLoaded', function () {
         logOut()
@@ -194,50 +176,42 @@
         getLoggedInUsers();
         getMessages();
     });
-
     //----------------------------------------------------------
     function messageSubmit() {
         document.getElementById("send").addEventListener("click", function (event) {
-            if (!validateInput())
+            if (!validateInput()) {
+                alert("Please enter a message");
                 return;
-
+            }
             document.getElementById("message-form").submit();
         });
     }
-
     //----------------------------------------------------------
     function logOut() {
         document.getElementById("logout").addEventListener("click", function (event) {
-
             document.getElementById("logout-form").submit();
         });
     }
     //----------------------------------------------------------
     function validateInput() {
         let chat = document.getElementById("content").value.trim();
-
         if (chat == "")
             return false;
-
         document.getElementById("message-form").innerHTML += "<input type='hidden' name='chat' id='chat' value='" + chat + "'>"
-
         return true;
     }
     //----------------------------------------------------------
-</script>
-
-
-<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/0.12.14/vue.min.js'></script>
-<script src="./js/chat.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
-        integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
-        crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
-      integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="custom.css">
-<link rel="stylesheet" href="./css/chat.css"/>
-
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/0.12.14/vue.min.js'></script>
+    <script src="./js/chat.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"
+            integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4"
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css"
+          integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="custom.css">
+    <link rel="stylesheet" href="./css/chat.css"/>
 
 </body>
 </html>
