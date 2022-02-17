@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>search</title>
+    <title>Search Page</title>
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" rel="stylesheet">
-
     <style>
         html,
         body {
@@ -20,34 +19,24 @@
         <div class="col">
             <div class="col-12 m-3">
                 <input id="input-search" name="input-search" type="text">
-
             </div>
             <div class="col-12 m-3">
                 <input id="search" type="button" class="btn btn-primary" value="Search by name">
                 <input id="search-word" type="button" class="btn btn-primary" value="Search by Key word">
-
-
                 <div id=message style="font-size:30px">
-
                 </div>
                 <div class="row">
                     <div class="col p-3">
-
                         <a class="btn btn-primary btn-lg active " role="button" aria-pressed="true" href="/">Back to
                             chat room</a>
                     </div>
-
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 
 <script>
-
-
     function getMessages() {
 
         let name = document.getElementById("input-search").value.trim();
@@ -62,19 +51,20 @@
             .then(resp => {
 
                 res = "";
-                for (el of resp) {
-                    res = res + "<br/>" + el.chat;
-                }
-                ;
+                if (resp.length === 0)
+                    document.getElementById("message").innerHTML = "The name u searched for is not logged in or did not post any messages";
+                else{
+                    for (el of resp) {
+                        res = res + "<br/>" + el.chat;
+                    };
 
                 document.getElementById("message").innerHTML = res;
+                }
             })
             .catch(e => {
                 document.getElementById("message").innerHTML = "Some error occured!";
             });
-
     };
-
 
     function getMessagesByWord() {
 
@@ -90,27 +80,30 @@
             .then(resp => {
 
                 res = "";
-                for (el of resp) {
-                    res = res + "<br/>" + el.chat;
+                if (resp.length === 0)
+                    document.getElementById("message").innerHTML = "The messages u searched for was not found";
+                else {
+                    for (el of resp) {
+                        res = res + "<br/>" + el.chat;
+                    }
+
+                    document.getElementById("message").innerHTML = res;
                 }
-
-
-                document.getElementById("message").innerHTML = res;
             })
             .catch(e => {
                 document.getElementById("message").innerHTML = "Some error occured!";
             });
-
     };
-
 
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("search").addEventListener("click", function () {
 
             let chat = document.getElementById("input-search").value.trim();
 
-            if (chat === "")
+            if (chat === "") {
+                document.getElementById("message").innerHTML = "Please enter your search";
                 return;
+            }
             getMessages();
         });
     });
@@ -121,17 +114,15 @@
 
             let chat = document.getElementById("input-search").value.trim();
 
-            if (chat === "")
+            if (chat === "") {
+                document.getElementById("message").innerHTML = "Please enter your search";
                 return;
-
+            }
             getMessagesByWord();
-
         });
     });
 
 </script>
-
-
 </body>
 </html>
 
