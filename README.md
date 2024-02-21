@@ -52,9 +52,9 @@ profileIndex- to apply a profile picture.
 -------------------------------------------------------------------------------------------
 Get messages:
 
-the response to the request for the list of messages will return the list of the last 5 messages only if a new message was added
+the response to the request for the list of messages will return the list of the last 5 messages only 
 
-otherwise returns an empty list and no change is made on the client side.
+if a new message was added otherwise no change is made on the client side.
 
 The NewMessageId will determine whether or not there was a new message added.
 
